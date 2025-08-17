@@ -1,0 +1,210 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+  
+  code {
+    font-family: 'JetBrains Mono', 'Consolas', monospace;
+  }
+}
+
+@layer components {
+  .btn {
+    @apply px-4 py-2 rounded-md font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2;
+  }
+  
+  .btn-primary {
+    @apply bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500;
+  }
+  
+  .btn-secondary {
+    @apply bg-secondary-600 text-white hover:bg-secondary-700 focus:ring-secondary-500;
+  }
+  
+  .btn-success {
+    @apply bg-success-600 text-white hover:bg-success-700 focus:ring-success-500;
+  }
+  
+  .btn-warning {
+    @apply bg-warning-600 text-white hover:bg-warning-700 focus:ring-warning-500;
+  }
+  
+  .btn-error {
+    @apply bg-error-600 text-white hover:bg-error-700 focus:ring-error-500;
+  }
+  
+  .btn-outline {
+    @apply border border-gray-300 text-gray-700 hover:bg-gray-50 focus:ring-gray-500;
+  }
+  
+  .card {
+    @apply bg-white rounded-lg shadow-sm border border-gray-200 p-6;
+  }
+  
+  .input {
+    @apply block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500;
+  }
+  
+  .difficulty-easy {
+    @apply text-success-600 bg-success-50 border-success-200;
+  }
+  
+  .difficulty-medium {
+    @apply text-warning-600 bg-warning-50 border-warning-200;
+  }
+  
+  .difficulty-hard {
+    @apply text-error-600 bg-error-50 border-error-200;
+  }
+  
+  .status-accepted {
+    @apply text-success-600 bg-success-50;
+  }
+  
+  .status-wrong {
+    @apply text-error-600 bg-error-50;
+  }
+  
+  .status-pending {
+    @apply text-warning-600 bg-warning-50;
+  }
+  
+  .status-running {
+    @apply text-primary-600 bg-primary-50;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Monaco Editor custom styles */
+.monaco-editor {
+  border-radius: 8px;
+}
+
+/* Loading animation */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+/* Code syntax highlighting */
+.hljs {
+  display: block;
+  overflow-x: auto;
+  padding: 1em;
+  background: #f8fafc;
+  border-radius: 0.5rem;
+}
+
+.hljs-comment,
+.hljs-quote {
+  color: #64748b;
+  font-style: italic;
+}
+
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-subst {
+  color: #dc2626;
+  font-weight: bold;
+}
+
+.hljs-number,
+.hljs-literal,
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag .hljs-attr {
+  color: #059669;
+}
+
+.hljs-string,
+.hljs-doctag {
+  color: #2563eb;
+}
+
+.hljs-title,
+.hljs-section,
+.hljs-selector-id {
+  color: #7c3aed;
+  font-weight: bold;
+}
+
+.hljs-type,
+.hljs-class .hljs-title {
+  color: #dc2626;
+  font-weight: bold;
+}
+
+.hljs-tag,
+.hljs-name,
+.hljs-attribute {
+  color: #059669;
+  font-weight: normal;
+}
+
+.hljs-regexp,
+.hljs-link {
+  color: #2563eb;
+}
+
+.hljs-symbol,
+.hljs-bullet {
+  color: #7c3aed;
+}
+
+.hljs-built_in,
+.hljs-builtin-name {
+  color: #dc2626;
+}
+
+.hljs-meta {
+  color: #64748b;
+}
+
+.hljs-deletion {
+  background: #fecaca;
+}
+
+.hljs-addition {
+  background: #bbf7d0;
+}
+
+.hljs-emphasis {
+  font-style: italic;
+}
+
+.hljs-strong {
+  font-weight: bold;
+}

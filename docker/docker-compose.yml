@@ -1,0 +1,141 @@
+version: '3.8'
+
+services:
+  # MySQL Database
+  mysql:
+    image: mysql:8.0
+    container_name: coding_platform_mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: coding_platform
+      MYSQL_USER: platform_user
+      MYSQL_PASSWORD: secure_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ../backend/migrations/init_database.sql:/docker-entrypoint-initdb.d/init_database.sql
+    networks:
+      - coding_platform
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: coding_platform_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - coding_platform
+    command: redis-server --appendonly yes --requirepass redis_password
+
+  # Backend Flask API
+  backend:
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
+    container_name: coding_platform_backend
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_ENV=development
+      - MYSQL_HOST=mysql
+      - MYSQL_PASSWORD=secure_password
+      - REDIS_HOST=redis
+      - REDIS_PASSWORD=redis_password
+      - JWT_SECRET_KEY=your-secret-key-here
+    volumes:
+      - ../backend:/app
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    networks:
+      - coding_platform
+    restart: unless-stopped
+
+  # Frontend React App
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+    container_name: coding_platform_frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - REACT_APP_API_URL=http://localhost:5000
+      - REACT_APP_FIREBASE_API_KEY=your_api_key
+      - REACT_APP_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
+      - REACT_APP_FIREBASE_DATABASE_URL=https://your_project.firebaseio.com
+      - REACT_APP_FIREBASE_PROJECT_ID=your_project_id
+    volumes:
+      - ../frontend:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+    networks:
+      - coding_platform
+    restart: unless-stopped
+
+  # Code Execution Containers
+  python-executor:
+    build:
+      context: ./executor/python
+      dockerfile: Dockerfile
+    image: coding-platform-python
+    container_name: python_executor
+    networks:
+      - coding_platform
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+
+  javascript-executor:
+    build:
+      context: ./executor/javascript
+      dockerfile: Dockerfile
+    image: coding-platform-javascript
+    container_name: javascript_executor
+    networks:
+      - coding_platform
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+
+  # Nginx Reverse Proxy (Optional)
+  nginx:
+    image: nginx:alpine
+    container_name: coding_platform_nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./ssl:/etc/nginx/ssl
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - coding_platform
+    restart: unless-stopped
+
+volumes:
+  mysql_data:
+    driver: local
+  redis_data:
+    driver: local
+
+networks:
+  coding_platform:
+    driver: bridge
